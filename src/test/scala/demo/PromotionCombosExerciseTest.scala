@@ -19,12 +19,7 @@ class PromotionCombosExerciseTest  extends AnyFlatSpec {
     assertResult(
       List(PromotionCombo(List("P1", "P2")),
         PromotionCombo(List("P2", "P3")),
-        PromotionCombo(List("P3", "P5")),
         PromotionCombo(List("P1", "P4", "P5")),
-        PromotionCombo(List("P1", "P4")),
-        PromotionCombo(List("P4", "P5")),
-        PromotionCombo(List("P1", "P5")),
-        PromotionCombo(List("P3", "P4")),
         PromotionCombo(List("P3", "P4", "P5"))))(allCombinablePromotions(promotions))
 
   }
@@ -64,6 +59,20 @@ class PromotionCombosExerciseTest  extends AnyFlatSpec {
       Promotion("P3", Nil)
     )
     assert(allCombinablePromotions(promotions) == List(PromotionCombo(Seq("P2", "P3")), PromotionCombo(Seq("P1", "P3"))))
+  }
+
+  "it" should " return combos that are a subset of other combos " in {
+
+    val promotions = Seq(
+      Promotion("P1", Seq("P3")), // P1 is not combinable with P3
+      Promotion("P2", Seq("P4", "P5")), // P2 is not combinable with P4 and P5
+      Promotion("P3", Seq("P1")), // P3 is not combinable with P1
+      Promotion("P4", Seq("P2")), // P4 is not combinable with P2
+      Promotion("P5", Seq("P2")) // P5 is not combinable with P2
+    )
+
+    assert(!allCombinablePromotions(promotions).exists(s => s.promotionCodes == Seq("P1", "P4")))
+
   }
 
 }
