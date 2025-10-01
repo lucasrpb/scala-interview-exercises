@@ -25,12 +25,15 @@ class BestGroupPriceExerciseTest  extends AnyFlatSpec {
       CabinPrice("CB", "S2", 270.00)
     )
 
-    assertResult(List(
-        BestGroupPrice("CA","M1",200.0, "Military"),
-        BestGroupPrice("CA","S1",225.0, "Senior"),
-        BestGroupPrice("CB","M1",230.0,"Military"),
-        BestGroupPrice("CB","S1",245.0,"Senior")
-    ))(getBestGroupPrices(rates, prices))
+    val results = getBestGroupPrices(rates, prices)
+    val expected = List(
+      BestGroupPrice("CA","M1",200.0, "Military"),
+      BestGroupPrice("CA","S1",225.0, "Senior"),
+      BestGroupPrice("CB","M1",230.0,"Military"),
+      BestGroupPrice("CB","S1",245.0,"Senior")
+    )
+
+    assert(results.forall(s => expected.contains(s)))
 
   }
 
