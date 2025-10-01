@@ -15,39 +15,38 @@ object PromotionCombosExercise {
       p.code -> p.notCombinableWith
     }.toMap
 
-    def backtrack(current: Set[Promotion],
-                  index: Int,
-                  results: scala.collection.mutable.Set[Set[Promotion]]): Unit = {
+    def backtrack(
+                   current: Set[Promotion],
+                   index: Int
+                 ): Set[Set[Promotion]] = {
 
-      if(index == promotions.length){
+      // Reached the end of the path...
+      if (index == promotions.length) {
 
         // Exclude combinations with 1 element (not a combo)
-        if(current.size > 1){
-          results += current
+        if (current.size > 1) {
+          return Set(current)
         }
 
-        return
+        return Set.empty
       }
 
-      // Get current promotion
+      // Get the current promo
       val p = promotions(index)
 
-      // If current promotion p does not conflict with any of the promotions in the combination set, add it and
-      // continue combining
-      if(current.forall(c => !conflictsMap(c.code).exists(x => x.compareTo(p.code) == 0)
-        && !conflictsMap(p.code).exists(x => x.compareTo(c.code) == 0))){
-        backtrack(current + p, index + 1, results)
+      // If current promotion p does not conflict with any of the promotions in the current combination set, add it
+      // to it and continue combining down the path
+      if (current.forall(c =>  !conflictsMap(c.code).contains(p.code) && !conflictsMap(p.code).contains(c.code))) {
+        return backtrack(current + p, index + 1) ++ backtrack(current, index + 1)
       }
 
       // backtrack to explore new path
-      backtrack(current, index + 1, results)
+      backtrack(current, index + 1)
     }
 
-    val results = scala.collection.mutable.Set.empty[Set[Promotion]]
+    val results = backtrack(Set.empty[Promotion], 0)
 
-    backtrack(Set.empty[Promotion], 0, results)
-
-    def isSubset(combo: Set[Promotion], allCombos: scala.collection.mutable.Set[Set[Promotion]]): Boolean = {
+    def isSubset(combo: Set[Promotion], allCombos: Set[Set[Promotion]]): Boolean = {
       allCombos.filterNot(_ == combo).exists(s => combo.subsetOf(s))
     }
 
