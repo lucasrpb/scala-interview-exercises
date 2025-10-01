@@ -47,7 +47,15 @@ object PromotionCombosExercise {
 
     backtrack(Set.empty[Promotion], 0, results)
 
-    results.toSeq.map{s => PromotionCombo(s.toSeq.sortBy(_.code).map(_.code))}
+    def isSubset(combo: Set[Promotion], allCombos: scala.collection.mutable.Set[Set[Promotion]]): Boolean = {
+      allCombos.filterNot(_ == combo).exists(s => combo.subsetOf(s))
+    }
+
+    results
+      // Remove the combinations that are subset of combinations with greater size only keeping
+      // maximum number of combinable promotions in each
+      .filterNot(c => isSubset(c, results))
+      .toSeq.map{s => PromotionCombo(s.toSeq.sortBy(_.code).map(_.code))}
   }
 
   def combinablePromotions(promotionCode: String,
